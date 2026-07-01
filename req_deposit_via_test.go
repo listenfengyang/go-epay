@@ -19,8 +19,6 @@ func TestDepositVia(t *testing.T) {
 		Name:        "Goods",
 		Money:       "100.00",
 		ClientIP:    "18.162.184.178",
-		NotifyURL:   NotifyURL,
-		ReturnURL:   ReturnURL,
 	}
 	rsp, err := cli.DepositVia(req)
 	if err != nil {

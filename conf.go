@@ -2,7 +2,10 @@ package go_epay
 
 // EPayInitParams epay 初始化参数
 type EPayInitParams struct {
-	BaseURL           string `json:"baseUrl"           mapstructure:"baseUrl"           config:"baseUrl"           yaml:"baseUrl"`           // API 根地址，默认 https://api.epay365.biz
+	BaseURL           string `json:"baseUrl"       mapstructure:"baseUrl"           config:"baseUrl"           yaml:"baseUrl"` // API 根地址，默认 https://api.epay365.biz
+	DepositPath       string `json:"depositPath"    mapstructure:"depositPath"           config:"depositPath yaml:"depositPath"`
+	DepositViaPath    string `json:"depositViaPath"     mapstructure:"depositViaPath"       config:"depositViaPath yaml:"depositViaPath"`
+	WithdrawPath      string `json:"withdrawPath"        mapstructure:"withdrawPath"           config:"withdrawPath yaml:"withdrawPath"`
 	MerchantID        string `json:"merchantId"        mapstructure:"merchantId"        config:"merchantId"        yaml:"merchantId"`        // 商户 ID (pid)
 	DepositKey        string `json:"depositKey"        mapstructure:"depositKey"        config:"depositKey"        yaml:"depositKey"`        // 入金密钥
 	PayoutKey         string `json:"payoutKey"         mapstructure:"payoutKey"         config:"payoutKey"         yaml:"payoutKey"`         // 出金密钥

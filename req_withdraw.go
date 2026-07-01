@@ -45,7 +45,7 @@ func (cli *Client) Withdraw(req EPayWithdrawReq) (*EPayWithdrawRsp, error) {
 	cli.logger.Infof("[EPay] withdraw raw body: %s", rawBody)
 
 	var result EPayWithdrawRsp
-	rawURL := cli.Params.BaseURL + WithdrawPath
+	rawURL := cli.Params.BaseURL + cli.Params.WithdrawPath
 
 	resp, err := cli.ryClient.
 		R().

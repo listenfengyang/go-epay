@@ -19,7 +19,6 @@ func TestWithdraw(t *testing.T) {
 		Branch:      "KL Main Branch",
 		Money:       "50.00",
 		ClientIP:    "18.162.184.178",
-		NotifyURL:   WithdrawNotifyURL,
 	}
 	rsp, err := cli.Withdraw(req)
 	if err != nil {

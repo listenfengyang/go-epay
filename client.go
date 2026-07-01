@@ -16,6 +16,15 @@ func NewClient(logger utils.Logger, params *EPayInitParams) *Client {
 	if params.BaseURL == "" {
 		params.BaseURL = DefaultBaseURL
 	}
+	if params.DepositPath == "" {
+		params.DepositPath = DepositPath
+	}
+	if params.DepositViaPath == "" {
+		params.DepositViaPath = DepositViaPath
+	}
+	if params.WithdrawPath == "" {
+		params.WithdrawPath = WithdrawPath
+	}
 	return &Client{
 		Params:    params,
 		ryClient:  resty.New(),
