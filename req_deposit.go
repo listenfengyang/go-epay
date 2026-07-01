@@ -48,7 +48,7 @@ func (cli *Client) Deposit(req EPayDepositReq) (*EPayDepositRsp, error) {
 	cli.logger.Infof("[EPay] deposit raw body: %s", rawBody)
 
 	var result EPayDepositRsp
-	rawURL := cli.Params.BaseURL + DepositPath
+	rawURL := cli.Params.BaseURL + cli.Params.DepositPath
 
 	resp, err := cli.ryClient.
 		R().
