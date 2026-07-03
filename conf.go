@@ -7,6 +7,7 @@ type EPayInitParams struct {
 	DepositKey        string `json:"depositKey"        mapstructure:"depositKey"        config:"depositKey"        yaml:"depositKey"`        // 入金密钥
 	PayoutKey         string `json:"payoutKey"         mapstructure:"payoutKey"         config:"payoutKey"         yaml:"payoutKey"`         // 出金密钥
 	NotifyURL         string `json:"notifyUrl"         mapstructure:"notifyUrl"         config:"notifyUrl"         yaml:"notifyUrl"`         // 入金异步回调地址
+	FpxNotifyURL      string `json:"fpxNotifyUrl"      mapstructure:"fpxNotifyUrl"      config:"fpxNotifyUrl"      yaml:"fpxNotifyUrl"`      // FPX 入金异步回调地址（与普通入金回调地址不同时使用）
 	ReturnURL         string `json:"returnUrl"         mapstructure:"returnUrl"         config:"returnUrl"         yaml:"returnUrl"`         // 入金同步跳转地址
 	WithdrawNotifyURL string `json:"withdrawNotifyUrl" mapstructure:"withdrawNotifyUrl" config:"withdrawNotifyUrl" yaml:"withdrawNotifyUrl"` // 出金回调地址
 	DepositPath       string `json:"depositPath"       mapstructure:"depositPath"       config:"depositPath"       yaml:"depositPath"`       // Hosted Page 入金路径，默认 /submit.php

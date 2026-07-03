@@ -20,7 +20,7 @@ import (
 func (cli *Client) Deposit(req EPayDepositReq) (*EPayDepositRsp, error) {
 	req.PID = cli.Params.MerchantID
 	if req.NotifyURL == "" {
-		req.NotifyURL = cli.Params.NotifyURL
+		req.NotifyURL = cli.Params.FpxNotifyURL
 	}
 	if req.ReturnURL == "" {
 		req.ReturnURL = cli.Params.ReturnURL

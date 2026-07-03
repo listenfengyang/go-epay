@@ -26,6 +26,7 @@ func newTestClient() *Client {
 		DepositKey:        DepositKey,
 		PayoutKey:         PayoutKey,
 		NotifyURL:         NotifyURL,
+		FpxNotifyURL:      FpxNotifyURL,
 		ReturnURL:         ReturnURL,
 		WithdrawNotifyURL: WithdrawNotifyURL,
 	})
