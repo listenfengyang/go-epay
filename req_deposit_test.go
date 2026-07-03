@@ -2,6 +2,8 @@ package go_epay
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
 	"testing"
 	"time"
 
@@ -41,8 +43,6 @@ func TestDeposit(t *testing.T) {
 		BankName:    "Maybank",
 		Name:        "Goods",
 		Money:       "100.00",
-		NotifyURL:   "http://notify.test.com/notify",
-		ReturnURL:   "http://return.test.com/return",
 	}
 	rsp, err := cli.Deposit(req)
 	if err != nil {
@@ -50,4 +50,15 @@ func TestDeposit(t *testing.T) {
 		return
 	}
 	t.Logf("deposit rsp: code=%d tradeNo=%s payurl=%s", rsp.Code, rsp.TradeNo, rsp.PayURL)
+
+	// 将 FormHTML 写入临时文件并用浏览器打开，验证自动 POST 跳转效果
+	htmlFile := "/tmp/epay_deposit_test.html"
+	if err := os.WriteFile(htmlFile, []byte(rsp.FormHTML), 0644); err != nil {
+		t.Logf("write html file err: %v", err)
+		return
+	}
+	t.Logf("FormHTML written to %s, opening in browser...", htmlFile)
+	if err := exec.Command("open", htmlFile).Start(); err != nil {
+		t.Logf("open browser err: %v", err)
+	}
 }

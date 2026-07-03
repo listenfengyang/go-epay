@@ -2,24 +2,27 @@ package go_epay
 
 import (
 	"fmt"
+	"html"
 	"sort"
 	"strings"
 
-	jsoniter "github.com/json-iterator/go"
 	"github.com/listenfengyang/go-epay/utils"
 	"github.com/mitchellh/mapstructure"
 )
 
 // Deposit 发起入金请求（Hosted Page 方式）
-// POST https://api.epay365.biz/submit.php
+//
+// /submit.php 只接受 POST 表单，不支持 GET 请求。
+// 本方法不发起 HTTP 请求，本地生成完整 HTML 页面：
+//   - PayURL:   表单 action 地址（https://api.epay365.biz/submit.php）
+//   - FormHTML: 完整的自动提交 HTML 页面，后端直接以 Content-Type: text/html 返回给浏览器，
+//     浏览器渲染后立即 POST 跳转到支付页
 func (cli *Client) Deposit(req EPayDepositReq) (*EPayDepositRsp, error) {
 	req.PID = cli.Params.MerchantID
 	if req.NotifyURL == "" {
-
 		req.NotifyURL = cli.Params.NotifyURL
 	}
 	if req.ReturnURL == "" {
-
 		req.ReturnURL = cli.Params.ReturnURL
 	}
 
@@ -28,11 +31,11 @@ func (cli *Client) Deposit(req EPayDepositReq) (*EPayDepositRsp, error) {
 		return nil, fmt.Errorf("epay deposit: decode req failed: %w", err)
 	}
 
-	// 生成签名（原始值，不 URL encode）
+	// 生成签名
 	params["sign"] = utils.Sign(params, cli.Params.DepositKey)
 	params["sign_type"] = "MD5"
 
-	// 手动拼接原始 body（不 URL encode），与签名保持一致
+	// 按 key 排序
 	keys := make([]string, 0, len(params))
 	for k, v := range params {
 		if v != "" {
@@ -40,37 +43,32 @@ func (cli *Client) Deposit(req EPayDepositReq) (*EPayDepositRsp, error) {
 		}
 	}
 	sort.Strings(keys)
-	parts := make([]string, 0, len(keys))
+
+	actionURL := cli.Params.BaseURL + cli.Params.DepositPath
+
+	// 构造完整的自动提交 HTML 页面
+	var sb strings.Builder
+	sb.WriteString(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Redirecting...</title></head><body>`)
+	sb.WriteString(`<form id="epay-deposit-form" method="POST" action="`)
+	sb.WriteString(html.EscapeString(actionURL))
+	sb.WriteString(`">`)
 	for _, k := range keys {
-		parts = append(parts, fmt.Sprintf("%s=%s", k, params[k]))
+		sb.WriteString(`<input type="hidden" name="`)
+		sb.WriteString(html.EscapeString(k))
+		sb.WriteString(`" value="`)
+		sb.WriteString(html.EscapeString(params[k]))
+		sb.WriteString(`">`)
 	}
-	rawBody := strings.Join(parts, "&")
-	cli.logger.Infof("[EPay] deposit raw body: %s", rawBody)
+	sb.WriteString(`</form>`)
+	sb.WriteString(`<script>document.getElementById("epay-deposit-form").submit();</script>`)
+	sb.WriteString(`</body></html>`)
+	formHTML := sb.String()
 
-	var result EPayDepositRsp
-	rawURL := cli.Params.BaseURL + cli.Params.DepositPath
+	cli.logger.Infof("[EPay] deposit actionURL: %s", actionURL)
 
-	resp, err := cli.ryClient.
-		R().
-		SetBody(strings.NewReader(rawBody)).
-		SetFormData(params).
-		SetHeader("Content-Type", "application/x-www-form-urlencoded").
-		SetDebug(cli.debugMode).
-		SetResult(&result).
-		SetError(&result).
-		Post(rawURL)
-
-	restLog, _ := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(utils.GetRestyLog(resp))
-	cli.logger.Infof("[EPay] deposit response: %s", string(restLog))
-
-	if err != nil {
-		return nil, fmt.Errorf("epay deposit: request failed: %w", err)
-	}
-	if resp.StatusCode() != 200 {
-		return nil, fmt.Errorf("epay deposit: http status %d body: %s", resp.StatusCode(), resp.Body())
-	}
-	if result.Code != 1 {
-		return nil, fmt.Errorf("epay deposit: failed, code=%d msg=%s", result.Code, result.Msg)
-	}
-	return &result, nil
+	return &EPayDepositRsp{
+		Code:     1,
+		PayURL:   actionURL,
+		FormHTML: formHTML,
+	}, nil
 }

@@ -1,0 +1,29 @@
+{
+  // GitHub Copilot 自动补全
+  "github.copilot.enable": {
+    "*": true,
+    "go": true,
+    "markdown": true,
+    "yaml": true
+  },
+  "editor.inlineSuggest.enabled": true,
+  "editor.inlineSuggest.showToolbar": "always",
+
+  // Copilot Chat / 编辑模式
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.renameSuggestions.triggerAutomatically": true,
+
+  // 接受内联建议快捷键行为（Tab 接受，Escape 忽略）
+  "editor.tabCompletion": "on",
+
+  // Go 相关
+  "go.useLanguageServer": true,
+  "go.lintOnSave": "package",
+  "go.formatTool": "goimports",
+  "[go]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  }
+}

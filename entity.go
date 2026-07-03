@@ -25,10 +25,11 @@ type EPayDepositRsp struct {
 	Code      int    `json:"code"      form:"code"`      // 1=成功，其他失败
 	Msg       string `json:"msg"       form:"msg"`       // 消息
 	TradeNo   string `json:"trade_no"  form:"trade_no"`  // 平台订单号
-	PayURL    string `json:"payurl"    form:"payurl"`    // 支付链接（与 qrcode/urlscheme 三选一）
+	PayURL    string `json:"payurl"    form:"payurl"`    // 支付提交地址（POST action URL）
 	QRCode    string `json:"qrcode"    form:"qrcode"`    // 二维码链接
 	URLScheme string `json:"urlscheme" form:"urlscheme"` // 小程序 scheme
 	Param     string `json:"param"     form:"param"`     // 透传参数，如银行卡信息
+	FormHTML  string `json:"form_html" form:"form_html"` // 自动提交的 HTML 表单，嵌入页面后浏览器自动 POST 到支付页
 }
 
 // ============================================================
