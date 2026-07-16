@@ -41,7 +41,7 @@ func TestDeposit(t *testing.T) {
 		OutTradeNo:  orderNo,
 		AccountName: "WangWei",
 		BankAccount: "1234567890",
-		BankName:    "Maybank",
+		BankName:    "CIBBMYKL",
 		Name:        "Goods",
 		Money:       "100.00",
 	}

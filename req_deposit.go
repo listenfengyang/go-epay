@@ -1,13 +1,11 @@
 package go_epay
 
 import (
-	"fmt"
 	"html"
 	"sort"
 	"strings"
 
 	"github.com/listenfengyang/go-epay/utils"
-	"github.com/mitchellh/mapstructure"
 )
 
 // Deposit 发起入金请求（Hosted Page 方式）
@@ -26,16 +24,26 @@ func (cli *Client) Deposit(req EPayDepositReq) (*EPayDepositRsp, error) {
 		req.ReturnURL = cli.Params.ReturnURL
 	}
 
-	var params map[string]string
-	if err := mapstructure.Decode(req, &params); err != nil {
-		return nil, fmt.Errorf("epay deposit: decode req failed: %w", err)
+	// 按文档逐字段构造参数 map，确保 key 名称与 API 完全一致
+	params := map[string]string{
+		"pid":          req.PID,
+		"type":         req.Type,
+		"out_trade_no": req.OutTradeNo,
+		"account_name": req.AccountName,
+		"bank_account": req.BankAccount,
+		"bank_name":    req.BankName,
+		"notify_url":   req.NotifyURL,
+		"return_url":   req.ReturnURL,
+		"name":         req.Name,
+		"money":        req.Money,
+		"param":        req.Param,
 	}
 
-	// 生成签名
+	// 生成签名（Sign 内部会自动过滤 sign/sign_type 及空值）
 	params["sign"] = utils.Sign(params, cli.Params.DepositKey)
 	params["sign_type"] = "MD5"
 
-	// 按 key 排序
+	// 收集非空字段并按 key 排序，用于构造 HTML hidden inputs
 	keys := make([]string, 0, len(params))
 	for k, v := range params {
 		if v != "" {
